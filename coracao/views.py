@@ -56,12 +56,9 @@ class CoracaoCreateView(View):
             with open(model_path, 'rb') as f:
                 model = pickle.load(f)
 
-            # Faz a predição
             prediction = model.predict(features)
             print(prediction)
             heart_disease = int(prediction[0])  # 0 ou 1
-
-            # Cria e salva o modelo no banco
             coracao = CardiacoValidation()
             coracao.set_idade(age)
             coracao.set_sexo(request.POST.get('sex'))
@@ -74,13 +71,10 @@ class CoracaoCreateView(View):
             coracao.set_angina_exercicio(request.POST.get('exercise_angina'))
             coracao.set_oldpeak(oldpeak)
             coracao.set_inclinacao_st(request.POST.get('st_slope'))
-
             model_instance = coracao.to_model()
             model_instance.heart_disease = heart_disease
             model_instance.save()
-
             context = {'success': True, 'result': heart_disease}
-
         except Exception as e:
             import traceback
             traceback.print_exc()
