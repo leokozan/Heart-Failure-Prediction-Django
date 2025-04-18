@@ -92,20 +92,37 @@ class CoracaoEditView(View):
         return render(request, 'coracao/edit.html', {'paciente': paciente})
     def post(self, request, id):
         paciente = CoracaoModel.objects.get(id=id)
+        try:
+            validador = CardiacoValidation()
+            validador.set_idade(int(request.POST.get('age')))
+            validador.set_sexo(request.POST.get('sex'))
+            validador.set_tipo_dor_peito(request.POST.get('chest_pain_type'))
+            validador.set_pressao_repouso(int(request.POST.get('resting_bp')))
+            validador.set_colesterol(int(request.POST.get('cholesterol')))
+            validador.set_jejum_acima_120(request.POST.get('fastingBS'))
+            validador.set_ecg(request.POST.get('resting_ecg'))
+            validador.set_freq_maxima(int(request.POST.get('max_hr')))
+            validador.set_angina_exercicio(request.POST.get('exercise_angina'))
+            validador.set_oldpeak(float(request.POST.get('oldpeak')))
+            validador.set_inclinacao_st(request.POST.get('st_slope'))
+            dados_validados = validador.to_model()
+            paciente.age = dados_validados.age
+            paciente.sex = dados_validados.sex
+            paciente.chest_pain_type = dados_validados.chest_pain_type
+            paciente.resting_bp = dados_validados.resting_bp
+            paciente.cholesterol = dados_validados.cholesterol
+            paciente.fastingBS = dados_validados.fastingBS
+            paciente.resting_ecg = dados_validados.resting_ecg
+            paciente.max_hr = dados_validados.max_hr
+            paciente.exercise_angina = dados_validados.exercise_angina
+            paciente.oldpeak = dados_validados.oldpeak
+            paciente.st_slope = dados_validados.st_slope
 
-        paciente.age = request.POST.get('age')
-        paciente.sex = request.POST.get('sex')
-        paciente.chest_pain_type = request.POST.get('chest_pain_type')
-        paciente.resting_bp = request.POST.get('resting_bp')
-        paciente.cholesterol = request.POST.get('cholesterol')
-        paciente.fastingBS = request.POST.get('fastingBS')
-        paciente.resting_ecg = request.POST.get('resting_ecg')
-        paciente.max_hr = request.POST.get('max_hr')
-        paciente.exercise_angina = request.POST.get('exercise_angina')
-        paciente.oldpeak = request.POST.get('oldpeak')
-        paciente.st_slope = request.POST.get('st_slope')
-        paciente.heart_disease = request.POST.get('heart_disease')
+            paciente.heart_disease = int(request.POST.get('heart_disease')) 
 
-        paciente.save()
+            paciente.save()
 
-        return redirect('lista_pacientes')
+            return redirect('lista_pacientes')
+
+        except Exception as e:
+            traceback.print_exc()

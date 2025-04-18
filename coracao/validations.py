@@ -71,3 +71,42 @@ class CardiacoValidation:
         obj.oldpeak = self.__oldpeak
         obj.st_slope = self.__st_slope
         return obj
+    @property
+    def age(self):
+        return self.__age
+
+    @property
+    def sex(self):
+        return self.__sex
+
+    @property
+    def chest_pain_type(self):
+        return self.__chest_pain_type
+
+    @property
+    def resting_bp(self):
+        return self.__resting_bp
+
+    @property
+    def cholesterol(self):
+        return self.__cholesterol
+    # --
+    
+    @property
+    def fastingBS(self):
+        return self.__fastingBS
+    @property
+    def resting_ecg(self):
+        return self.__resting_ecg
+    @property
+    def max_hr(self):
+        return self.__max_hr
+    @property
+    def exercise_angina(self):
+        return self.__exercise_angina
+    @property
+    def oldpeak(self):
+        return self.__oldpeak
+    @property
+    def st_slope(self):
+        return self.__st_slope
