@@ -14,7 +14,6 @@ class CoracaoCreateView(View):
 
     def post(self, request):
         try:
-            # Conversão dos dados conforme o modelo foi treinado
             age = int(request.POST.get('age'))
             sex = 1 if request.POST.get('sex') == 'M' else 0  # M:1 | F:0
 
@@ -36,7 +35,6 @@ class CoracaoCreateView(View):
             st_slope_map = {'Down': 0.0, 'Flat': 1.0, 'Up': 2.0}
             st_slope = st_slope_map[request.POST.get('st_slope')]
 
-            # Criação da entrada para o modelo
             features = [[
                 age,
                 sex,
@@ -51,7 +49,6 @@ class CoracaoCreateView(View):
                 st_slope
             ]]
 
-            # Carrega o modelo
             model_path = os.path.join('hearth_model/model.pkl')
             with open(model_path, 'rb') as f:
                 model = pickle.load(f)
