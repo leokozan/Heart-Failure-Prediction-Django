@@ -1,0 +1,198 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Pacientes</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background-color: #f9f9f9;
+            margin: 40px;
+            color: #333;
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .chart-container {
+            width: 45%;
+            display: inline-block;
+            vertical-align: top;
+            margin: 20px 2%;
+        }
+
+        table {
+            border-collapse: separate;
+            border-spacing: 0;
+            width: 100%;
+            background-color: white;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            border-radius: 12px;
+            overflow: hidden;
+        }
+
+        th, td {
+            padding: 12px 15px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #4CAF50;
+            color: white;
+            font-weight: 600;
+        }
+
+        tr:nth-child(even) {
+            background-color: #f3f3f3;
+        }
+
+        tr:hover {
+            background-color: #f1f9f1;
+        }
+
+        td {
+            border-bottom: 1px solid #e0e0e0;
+        }
+
+        .edit-button {
+            padding: 6px 12px;
+            background-color: #2196F3;
+            color: white;
+            border: none;
+            border-radius: 6px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        .edit-button:hover {
+            background-color: #1976D2;
+        }
+
+        a {
+            text-decoration: none;
+        }
+    </style>
+</head>
+<body>
+    <h2>Lista de Pacientes</h2>
+    <a href="{% url 'coracao_create' %}">Adicionar</a>
+    <table>
+        <thead>
+            <tr>
+                <th>ID</th>
+                <th>Idade</th>
+                <th>Sexo</th>
+                <th>Angina (Exercício)</th>
+                <th>Tipo de Dor</th>
+                <th>Inclinação ST</th>
+                <th>ECG Repouso</th>
+                <th>Pressão</th>
+                <th>Colesterol</th>
+                <th>FastingBS</th>
+                <th>Frequência Máxima</th>
+                <th>Oldpeak</th>
+                <th>Problema cardíaco</th>
+                <th>Ações</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for p in pacientes %}
+            <tr>
+                <td>{{ p.id }}</td>
+                <td>{{ p.age }}</td>
+                <td {% if p.heart_disease  == '1' %}class="sexo {{ p.sex|lower }}"{% endif %}>{{ p.sex }}</td>
+                <td>{{ p.exercise_angina }}</td>
+                <td {% if p.heart_disease == '1' %}class="dor {{ p.chest_pain_type|lower }}"{% endif %}>{{ p.chest_pain_type }}</td>
+                <td>{{ p.st_slope }}</td>
+                <td>{{ p.resting_ecg }}</td>
+                <td>{{ p.resting_bp }}</td>
+                <td>{{ p.cholesterol }}</td>
+                <td>{{ p.fastingBS }}</td>
+                <td>{{ p.max_hr }}</td>
+                <td>{{ p.oldpeak }}</td>
+                <td>{{ p.heart_disease }}</td>
+                <td>
+                    <a href="{% url 'editar_paciente' p.id %}">
+                        <button class="edit-button">Editar</button>
+                    </a>
+                </td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+    <!-- Gráficos -->
+    <div class="chart-container">
+        <canvas id="sexoChart"></canvas>
+    </div>
+    <div class="chart-container">
+        <canvas id="dorChart"></canvas>
+    </div>
+
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Conta apenas pacientes com doença cardíaca
+        const countSexo = {
+            M: document.querySelectorAll('.sexo.m').length,
+            F: document.querySelectorAll('.sexo.f').length
+        };
+    
+        // Conta Tipo de Dor apenas para pacientes com doença cardíaca
+        const countDor = {
+            TA: document.querySelectorAll('.dor.ta').length,
+            ATA: document.querySelectorAll('.dor.ata').length,
+            NAP: document.querySelectorAll('.dor.nap').length,
+            ASY: document.querySelectorAll('.dor.asy').length
+        };
+        
+        const sexoData = {
+            labels: ['Masculino', 'Feminino'],
+            datasets: [{
+                label: 'Pacientes com Doença Cardíaca',
+                data: [countSexo.M, countSexo.F],
+                backgroundColor: ['#36A2EB', '#FF6384'],
+                borderRadius: 5
+            }]
+        };
+        
+        const dorData = {
+            labels: ['TA', 'ATA', 'NAP', 'ASY'],
+            datasets: [{
+                label: 'Tipo de Dor (com doença)',
+                data: [countDor.TA, countDor.ATA, countDor.NAP, countDor.ASY],
+                backgroundColor: ['#4CAF50', '#FF9800', '#9C27B0', '#00BCD4'],
+                borderRadius: 5
+            }]
+        };
+        
+        new Chart(document.getElementById('sexoChart'), {
+            type: 'bar',
+            data: sexoData,
+            options: {
+                responsive: true,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'Sexo dos Pacientes com Doença Cardíaca'
+                    }
+                }
+            }
+        });
+        
+        new Chart(document.getElementById('dorChart'), {
+            type: 'bar',
+            data: dorData,
+            options: {
+                responsive: true,
+                plugins: {
+                    title: {
+                        display: true,
+                        text: 'Distribuição por Tipo de Dor no Peito'
+                    }
+                }
+            }
+        });
+    </script>
+</body>
+</html>

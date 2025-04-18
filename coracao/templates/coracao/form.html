@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="pt-br">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Formulário Coração</title>
+    <!-- SweetAlert2 CSS -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/11.7.5/sweetalert2.min.css">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: #f2f4f7;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            min-height: 100vh;
+            margin: 0;
+        }
+
+        form {
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+            max-width: 400px;
+            width: 100%;
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        label {
+            display: block;
+            margin-top: 15px;
+            margin-bottom: 5px;
+            color: #444;
+            font-weight: 500;
+        }
+
+        input[type="number"],
+        select {
+            width: 100%;
+            padding: 10px;
+            border: 1px solid #ccc;
+            border-radius: 8px;
+            box-sizing: border-box;
+            transition: border-color 0.3s;
+        }
+
+        input[type="number"]:focus,
+        select:focus {
+            border-color: #007bff;
+            outline: none;
+        }
+
+        button {
+            margin-top: 20px;
+            width: 100%;
+            padding: 12px;
+            background-color: #007bff;
+            border: none;
+            color: white;
+            font-size: 16px;
+            border-radius: 8px;
+            cursor: pointer;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #0056b3;
+        }
+
+        @media (max-width: 480px) {
+            form {
+                padding: 20px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <form method="POST">
+        {% csrf_token %}
+        <h2>Dados do Coração</h2>
+        <a href="{% url 'lista_pacientes' %}">Voltar</a>
+        <label for="age">Idade:</label>
+        <input type="number" name="age" id="age" required>
+
+        <label for="sex">Sexo:</label>
+        <select name="sex" id="sex" required>
+            <option value="M">Masculino</option>
+            <option value="F">Feminino</option>
+        </select>
+
+        <label for="chest_pain_type">Tipo de dor no peito:</label>
+        <select name="chest_pain_type" id="chest_pain_type" required>
+            <option value="TA">TA</option>
+            <option value="ATA">ATA</option>
+            <option value="NAP">NAP</option>
+            <option value="ASY">ASY</option>
+        </select>
+
+        <label for="resting_bp">Pressão em repouso:</label>
+        <input type="number" name="resting_bp" id="resting_bp" required>
+
+        <label for="cholesterol">Colesterol:</label>
+        <input type="number" name="cholesterol" id="cholesterol" required>
+
+        <label for="fastingBS">Glicose em jejum &gt; 120 mg/dl:</label>
+        <select name="fastingBS" id="fastingBS" required>
+            <option value="1">Sim</option>
+            <option value="0">Não</option>
+        </select>
+
+        <label for="resting_ecg">ECG em repouso:</label>
+        <select name="resting_ecg" id="resting_ecg" required>
+            <option value="Normal">Normal</option>
+            <option value="ST">ST</option>
+            <option value="LVH">LVH</option>
+        </select>
+
+        <label for="max_hr">Frequência cardíaca máxima:</label>
+        <input type="number" name="max_hr" id="max_hr" required>
+
+        <label for="exercise_angina">Angina por esforço:</label>
+        <select name="exercise_angina" id="exercise_angina" required>
+            <option value="Y">Sim</option>
+            <option value="N">Não</option>
+        </select>
+
+        <label for="oldpeak">Oldpeak:</label>
+        <input type="number" step="0.1" name="oldpeak" id="oldpeak" required>
+
+        <label for="st_slope">Inclinação ST:</label>
+        <select name="st_slope" id="st_slope" required>
+            <option value="Up">Up</option>
+            <option value="Flat">Flat</option>
+            <option value="Down">Down</option>
+        </select>
+
+        <button type="submit">Enviar</button>
+    </form>
+
+    <!-- SweetAlert2 JS -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/limonte-sweetalert2/11.7.5/sweetalert2.min.js"></script>
+    
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            {% if success is not None %}
+                {% if success %}
+                    {% if result == 1 %}
+                        Swal.fire({
+                            title: 'Resultado da Análise',
+                            text: 'Alerta! Possível doença cardíaca detectada.',
+                            icon: 'warning',
+                            confirmButtonText: 'Entendi',
+                            confirmButtonColor: '#d33'
+                        });
+                    {% else %}
+                        Swal.fire({
+                            title: 'Resultado da Análise',
+                            text: 'Não foi detectada doença cardíaca.',
+                            icon: 'success',
+                            confirmButtonText: 'Ok',
+                            confirmButtonColor: '#3085d6'
+                        });
+                    {% endif %}
+                {% else %}
+                    Swal.fire({
+                        title: 'Erro',
+                        text: '{{ error }}',
+                        icon: 'error',
+                        confirmButtonText: 'Ok',
+                        confirmButtonColor: '#3085d6'
+                    });
+                {% endif %}
+            {% endif %}
+        });
+    </script>
+</body>
+</html>
